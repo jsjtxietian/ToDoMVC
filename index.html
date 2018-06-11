@@ -4,18 +4,13 @@
 <head>
     <meta content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1" name="viewport" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
-    <style type="text/css">
-        @import"bundle.run/normalize.css";
-    </style>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link rel="stylesheet" type="text/css" href="./node_modules/normalize.css/normalize.css">
 </head>
 
 <title>
     Try to finish them all !
 </title>
-
-<head>
-    <link rel="stylesheet" type="text/css" href="./style.css">
-</head>
 
 <body>
     <nav id="menu">
@@ -30,32 +25,16 @@
     </nav>
 
     <main id="panel">
-        <header>
+        <header class="head">
             <button class="toggle-button">☰</button>
             <span>ToDo List</span>
-            <select class="sort">
-                    <option value="ctime" selected="selected">Sort by created time</option>
-                    <option value="A-Z">Sort by A-Z</option>
-            </select>
-        </header>
-    </main>
-    <!-- <div class="todoapp">
-        <div class="main-up">
-            <span>ToDoList</span>
             <select class="sort">
                 <option value="ctime" selected="selected">Sort by created time</option>
                 <option value="A-Z">Sort by A-Z</option>
             </select>
-        </div>
-        <div class="main-left">
-            <button>ALL</button>
-            <br>
-            <button>ALL</button>
-            <br>
-            <button>UCL</button>
-        </div>
+        </header>
 
-        <div class="main-right">
+        <div class="main-body">
             <input class="toggle-all" type="checkbox">
             <input type="text" id="todo" placeholder="add a todo" autofocus>
 
@@ -66,9 +45,10 @@
 
             <ul class="completed-list">
             </ul>
-
         </div>
-    </div> -->
+
+    </main>
+
     <script src="./todo.js"></script>
     <script src="./model.js"></script>
     <script src="./provider.js"></script>

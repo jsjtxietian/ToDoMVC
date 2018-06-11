@@ -1,21 +1,29 @@
 .sort{
     float: right;
-    background: rgb(157, 197, 157);
     margin-right: 30px;
     border : 0;
     vertical-align: text-bottom;
+    background: transparent;
 }
 
 .toggle-all{
-    
+
+}
+
+.head{
+    font-size : 15pt; 
+    font-family: cursive;
+    background-color: rgb(59, 202, 183);
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 body {
     width: 100%;
     height: 100%;
-    background-color: rgb(193, 202, 59);
+    background-color: rgb(30, 221, 196);
 }
-  
+
 .slideout-menu {
   position: fixed;
   top: 0;
