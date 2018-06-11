@@ -1,0 +1,10 @@
+{
+  "name": "todomvc",
+  "version": "1.0.0",
+  "description": "web programing homework",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC"
+}
