@@ -1,22 +1,46 @@
 .sort{
     float: right;
-    margin-right: 30px;
+    margin: 4.5px 25px 3px 0;
     border : 0;
-    vertical-align: text-bottom;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-style: italic;
+    font-size: 13pt;
     background: transparent;
 }
 
-.toggle-all{
-
-}
 
 .head{
-    font-size : 15pt; 
-    font-family: cursive;
-    background-color: rgb(59, 202, 183);
-    padding-top: 5px;
-    padding-bottom: 5px;
+  font-size : 19pt; 
+  font-family: cursive;
+  background-color: rgb(59, 202, 183);
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
+
+.add-todo{
+  margin: 5pt 0;
+  text-align: center;
+  height: 32px;
+}
+
+.add-todo .input{
+  border: none;
+  outline: medium;
+  padding: 0;
+  vertical-align: middle;
+  font-size: 17pt;
+  background: rgb(157, 197, 157);
+}
+
+.main-body{
+  margin: 0 35px ;
+}
+
+/* 
+.add-todo .img-add{
+  vertical-align: middle;
+}
+
 
 body {
     width: 100%;
@@ -50,6 +74,7 @@ body {
   will-change: transform;
   background-color: rgb(157, 197, 157);
   min-height: 100vh;
+  height: 100%;
 }
 
 .slideout-open,

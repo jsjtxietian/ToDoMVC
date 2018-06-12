@@ -21,7 +21,7 @@ let GUID = getGUID();
 
 window.onload = function () {
     //slide
-    var slideout = new Slideout({
+    let slideout = new Slideout({
         'panel': document.getElementById('panel'),
         'menu': document.getElementById('menu'),
         'padding': 128,

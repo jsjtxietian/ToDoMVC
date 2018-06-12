@@ -14,14 +14,17 @@
 
 <body>
     <nav id="menu">
-        <header>
-            <h2>Menu</h2>
-            <button>ALL</button>
-            <br>
-            <button>ALL</button>
-            <br>
-            <button>UCL</button>
-        </header>
+        <ul class="filters">
+            <li>
+                <a class="selected" style="cursor:pointer;">All</a>
+            </li>
+            <li>
+                <a class="" style="cursor:pointer;">Active</a>
+            </li>
+            <li>
+                <a class="" style="cursor:pointer;">Completed</a>
+            </li>
+        </ul>
     </nav>
 
     <main id="panel">
@@ -35,8 +38,11 @@
         </header>
 
         <div class="main-body">
-            <input class="toggle-all" type="checkbox">
-            <input type="text" id="todo" placeholder="add a todo" autofocus>
+            <div class="add-todo">
+                <img src="./img/add.png" alt="+" class="img-add">
+                <input type="text" class="input" placeholder="add a todo" autofocus>
+                <hr class="hr-line">
+            </div>
 
             <ul class="uncompleted-list">
             </ul>
