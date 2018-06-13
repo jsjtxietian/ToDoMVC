@@ -17,13 +17,9 @@ function getGUID() {
     return increment;
 }
 
-function overlay() { 
-    var e1 = document.getElementById('modal-overlay'); 
-    e1.style.visibility = (e1.style.visibility == "visible") ? "hidden" : "visible"; 
-}
-
-
 let GUID = getGUID();
+let recognition = new webkitSpeechRecognition();
+let recognizing = false;
 
 window.onload = function () {
     //slide
@@ -39,11 +35,104 @@ window.onload = function () {
         slideout.toggle();
     });
 
+    initSpeechRec();
 
-    //
+    model.init(function () {
+        let data = model.data;
+
+        //input binding
+        let newTodo = $('.add-todo .input');
+        newTodo.addEventListener('keyup', function () {
+            data.msg = newTodo.value;
+        });
+        newTodo.addEventListener('change', function () {
+            model.flush();
+        });
+        newTodo.addEventListener('keyup', function (ev) {
+            if (ev.keyCode != 13) 
+                return; // Enter
+
+            if (data.msg == '') {
+                console.warn('input msg is empty');
+                return;
+            }
+
+            let myDate = new Date();
+
+            data.uitems.push({ 
+                msg: data.msg, 
+                completed: false, 
+                createdTime : myDate.toLocaleString()
+            });
+            data.msg = '';
+            update();
+        }, false);
+
+        let speechbutton = $('.add-todo .speech-icon');
+        speechbutton.addEventListener('click',function(event){
+            if (recognizing) {
+                recognition.stop();
+                speechbutton.src="./img/before.png";
+                return;
+            }
+            speechbutton.src="./img/after.png";
+            recognition.start();
+        })
+
+        
+        update();
+    });
 }
 
-//
+function update() {
+    model.flush();
+    let data = model.data;
+
+    let uncompletedList = $('.uncompleted-list');
+    let completedList = $('.completed-list');
+    let completedText = $('.completed-count');
+    let input = $('.add-todo .input');
+
+    input.value = data.msg;
+
+    uncompletedList.innerHTML = '';
+    data.uitems.filter(item => item.completed == false).forEach(
+        (itemData, index) => {
+            let item = document.createElement('li');
+            item.classList.add("single-todo");
+            let id = 'item' + GUID();
+            item.setAttribute('id', id);
+
+            item.innerHTML = [
+                '  <input class="toggle" type="checkbox">',
+                '  <label class="todo-label">' + itemData.msg + '</label>'
+            ].join('');
+
+            uncompletedList.insertBefore(item, uncompletedList.firstChild)
+        });
+}
+
+function overlay() {
+    let e1 = document.getElementById('modal-overlay');
+    e1.style.visibility = (e1.style.visibility == "visible") ? "hidden" : "visible";
+}
+
+function initSpeechRec() {
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.onstart = function () {
+        recognizing = true;
+    };
+
+    recognition.onend = function () {
+        recognizing = false;
+    };
+
+    recognition.onresult = function (event) {
+        $('.input').value = event.results[0][0].transcript;
+    };
+}
+
 
 // var makeArray = function (likeArray) {
 //     var array = [];

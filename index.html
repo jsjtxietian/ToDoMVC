@@ -4,7 +4,8 @@
 <head>
     <meta content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1" name="viewport" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js" integrity="sha256-GMd3rFxMDNnM5JQEpiKLLl8kSrDuG5egqchk758z59g=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js" integrity="sha256-GMd3rFxMDNnM5JQEpiKLLl8kSrDuG5egqchk758z59g="
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="./style.css">
     <link rel="stylesheet" type="text/css" href="./normalize.css">
 </head>
@@ -30,8 +31,10 @@
 
     <main id="panel">
         <header class="head">
-            <button class="toggle-button">☰</button>
-            <span>ToDo List</span>
+            <button class="toggle-button">
+                <img src="./img/menu.png" class="button-img" alt="☰">
+            </button>
+            <span class="head-text">ToDo List</span>
             <select class="sort">
                 <option value="ctime" selected="selected">Sort by created time</option>
                 <option value="A-Z">Sort by A-Z</option>
@@ -42,6 +45,7 @@
             <div class="add-todo">
                 <img src="./img/add.png" alt="+" class="img-add">
                 <input type="text" class="input" placeholder="add a todo" autofocus>
+                <img src="img/before.png" class="speech-icon">
                 <hr class="hr-line">
             </div>
 
@@ -53,13 +57,9 @@
             </div>
 
             <ul class="uncompleted-list">
-                <li class="single-todo">
-                    <input type="checkbox" class="toggle">
-                    <label class="todo-label" onclick="overlay()">Hello World</label>
-                </li>
             </ul>
 
-            <p class="completedText"></p>
+            <p class="completed-count"></p>
 
             <ul class="completed-list">
             </ul>
