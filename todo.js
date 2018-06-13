@@ -17,6 +17,12 @@ function getGUID() {
     return increment;
 }
 
+function overlay() { 
+    var e1 = document.getElementById('modal-overlay'); 
+    e1.style.visibility = (e1.style.visibility == "visible") ? "hidden" : "visible"; 
+}
+
+
 let GUID = getGUID();
 
 window.onload = function () {
@@ -33,7 +39,7 @@ window.onload = function () {
         slideout.toggle();
     });
 
-    
+
     //
 }
 

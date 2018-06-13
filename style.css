@@ -1,16 +1,58 @@
+#modal-overlay {
+  visibility: hidden; 
+  position: absolute; 
+  left: 0px;
+  top: 0px; 
+  width:100%; 
+  height:100%; 
+  text-align:center;
+  z-index: 1000; 
+}
+
+.modal-data{ 
+  width:300px;
+  margin: 100px auto; 
+  background-color: #fff; 
+  border:1px solid #000; 
+  padding:15px; 
+  text-align:center; 
+} 
+
+.uncompleted-list{
+  padding: 0;
+  margin: 20px 0px;
+}
+
+.single-todo{
+  margin: 5px 20px;
+  list-style: none;
+  font-size: 18pt;
+}
+
+.single-todo .toggle{
+  width:26.5px;
+  height: 26.5px;
+  vertical-align: middle;
+
+}
+
+.single-todo .todo-label{
+  vertical-align: middle;
+}
+
 .sort{
     float: right;
-    margin: 4.5px 25px 3px 0;
+    margin: 4.5px 10px 3px 0;
     border : 0;
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-style: italic;
-    font-size: 13pt;
+    font-size: 12pt;
     background: transparent;
 }
 
 
 .head{
-  font-size : 19pt; 
+  font-size : 20pt; 
   font-family: cursive;
   background-color: rgb(59, 202, 183);
   padding-top: 10px;
@@ -25,28 +67,34 @@
 
 .add-todo .input{
   border: none;
+  font-family:  inherit;
   outline: medium;
   padding: 0;
   vertical-align: middle;
-  font-size: 17pt;
+  font-size: 18pt;
+  width: 250px;
   background: rgb(157, 197, 157);
+}
+
+.add-todo .hr-line{
+  margin : 5px auto;
 }
 
 .main-body{
   margin: 0 35px ;
 }
 
-/* 
+
 .add-todo .img-add{
   vertical-align: middle;
 }
-
 
 body {
     width: 100%;
     height: 100%;
     background-color: rgb(30, 221, 196);
 }
+
 
 .slideout-menu {
   position: fixed;
@@ -90,4 +138,5 @@ body {
 .toggle-button{
     background: transparent;
     border : 0;
-}
+    outline: medium;
+} 

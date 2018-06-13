@@ -4,8 +4,9 @@
 <head>
     <meta content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1" name="viewport" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js" integrity="sha256-GMd3rFxMDNnM5JQEpiKLLl8kSrDuG5egqchk758z59g=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="./style.css">
-    <link rel="stylesheet" type="text/css" href="./node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./normalize.css">
 </head>
 
 <title>
@@ -44,7 +45,18 @@
                 <hr class="hr-line">
             </div>
 
+            <div id="modal-overlay">
+                <div class="modal-data">
+                    <p class="change-ins">Modify your todo item</p>
+                    <input type="text" class="change-todo">
+                </div>
+            </div>
+
             <ul class="uncompleted-list">
+                <li class="single-todo">
+                    <input type="checkbox" class="toggle">
+                    <label class="todo-label" onclick="overlay()">Hello World</label>
+                </li>
             </ul>
 
             <p class="completedText"></p>
