@@ -1,10 +1,7 @@
 window.model = {
     data: {
-        uitems: [
+        items: [
             // {msg:'', completed: false,createdtime}
-        ],
-        citems:[
-            
         ],
         msg: '',
         filter: 'All'

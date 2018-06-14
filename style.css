@@ -23,6 +23,17 @@
   margin: 20px 0px;
 }
 
+.completed-list{
+  padding: 0;
+  margin: 10px 0px;
+}
+
+.completed-count{
+  font-size: 12pt;
+  margin: 0 3.5%;
+  font-family: monospace;
+}
+
 .single-todo{
   margin: 5px 20px;
   list-style: none;
@@ -37,7 +48,12 @@
 }
 
 .single-todo .todo-label{
-  vertical-align: middle;
+  word-break: break-all;
+  /* display: block; */
+}
+
+.single-todo .finished{
+  text-decoration: line-through;
 }
 
 .sort{
@@ -62,8 +78,7 @@
 }
 
 .add-todo{
-  margin: 5pt 0;
-  text-align: center;
+  margin: 5px 5px;
   height: 32px;
 }
 
@@ -74,12 +89,13 @@
   padding: 0;
   vertical-align: middle;
   font-size: 18pt;
-  width: 66%;
+  width: 75%;
   background: rgb(157, 197, 157);
 }
 
 .add-todo .speech-icon{
   vertical-align: middle;
+  width: 8.5%;
 }
 
 .add-todo .hr-line{
@@ -87,12 +103,13 @@
 }
 
 .main-body{
-  margin: 0 35px ;
+  margin: 0 9% ;
 }
 
 
 .add-todo .img-add{
   vertical-align: middle;
+  width: 8.5%;
 }
 
 body {
@@ -100,7 +117,6 @@ body {
     height: 100%;
     background-color: rgb(30, 221, 196);
 }
-
 
 .slideout-menu {
   position: fixed;
