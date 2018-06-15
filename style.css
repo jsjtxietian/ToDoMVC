@@ -43,13 +43,14 @@
 .single-todo .toggle{
   width: 23.5px;
   height: 23.5px;
-  vertical-align: middle;
-
+  position: absolute;
+  margin:auto 0;
 }
 
 .single-todo .todo-label{
   word-break: break-all;
-  /* display: block; */
+  display: block;
+  margin-left: 10%;
 }
 
 .single-todo .finished{
