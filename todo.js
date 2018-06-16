@@ -1,6 +1,12 @@
 let GUID = getGUID();
-let recognition = new webkitSpeechRecognition();
+let recognition;
 let recognizing = false;
+
+if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+} else {
+    recognition = null;
+}
 
 
 //todo style block inlineblock
@@ -55,16 +61,18 @@ window.onload = function () {
             update();
         }, false);
 
-        let speechbutton = $('.add-todo .speech-icon');
-        speechbutton.addEventListener('click', function (event) {
-            if (recognizing) {
-                recognition.stop();
-                speechbutton.src = "./img/before.png";
-                return;
-            }
-            speechbutton.src = "./img/after.png";
-            recognition.start();
-        })
+        if (recognition) {
+            let speechbutton = $('.add-todo .speech-icon');
+            speechbutton.addEventListener('click', function (event) {
+                if (recognizing) {
+                    recognition.stop();
+                    speechbutton.src = "./img/before.png";
+                    return;
+                }
+                speechbutton.src = "./img/after.png";
+                recognition.start();
+            })
+        }
 
         let overlay = document.getElementById('modal-overlay');
         let modifyInput = overlay.querySelector('.modal-data .change-todo');
@@ -107,10 +115,10 @@ function update() {
     let hammerUc = new Hammer(uncompletedList);
     hammerUc.get('pan').set({
         direction: Hammer.DIRECTION_ALL,
-        threshold: 30
+        threshold: 20
     });
     hammerUc.on('pandown', function (ev) {
-        completeAll();
+        CorUCAll(true);
     });
 
 
@@ -166,6 +174,9 @@ function update() {
     hammerC.on('pandown', function (ev) {
         clearAllCompleted();
     });
+    hammerC.on('panup',function(ev){
+        CorUCAll(false);
+    })
 
     data.items.filter(item => item.completed == true).forEach(
         (itemData, index) => {
@@ -194,16 +205,15 @@ function update() {
         });
 }
 
-function completeAll()
-{
+function CorUCAll(isComplete) {
     let data = model.data;
-    data.items.forEach(item => item.completed = true);
+    data.items.forEach(item => item.completed = isComplete);
     update();
 }
 
-function clearAllCompleted(){
+function clearAllCompleted() {
     let data = model.data;
-    data.items.filter(item => item.completed == true).forEach((itemData,index) => {
+    data.items.filter(item => item.completed == true).forEach((itemData, index) => {
         data.items.splice(index, 1);
     });
     update();
@@ -231,6 +241,8 @@ function initSpeechRec() {
 
     recognition.onend = function () {
         recognizing = false;
+        let speechbutton = $('.add-todo .speech-icon');
+        speechbutton.src = "./img/before.png";
     };
 
     recognition.onresult = function (event) {

@@ -18,8 +18,44 @@
   text-align:center; 
 } 
 
-.setting-label{
-  margin: 10px 25%;  
+.filters{
+  list-style : none;
+}
+
+.Instruction{
+  font-family: monospace;
+  text-align: center;
+}
+
+.hints{
+  font-family: serif;
+}
+
+.instruction-block{
+  text-align: center;
+  margin: 20px 0;
+  vertical-align: middle;
+}
+
+.instruction-block .instruction{
+  font-size: 16pt;
+  vertical-align: middle;
+  font-family: monospace;
+}
+
+.instruction-block .instruction-img{
+  vertical-align: middle;
+  height: 25px;
+}
+
+.hints{
+  font-family: serif;
+  font-size: 12pt;
+  margin-right: 5%;
+}
+
+.hints .single-hint{
+  margin: 5px 0;
 }
 
 .uncompleted-list{
