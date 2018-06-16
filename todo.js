@@ -3,7 +3,8 @@ let recognition = new webkitSpeechRecognition();
 let recognizing = false;
 
 
-
+//todo style block inlineblock
+//how to align things
 
 window.onload = function () {
 
@@ -47,7 +48,8 @@ window.onload = function () {
             data.items.push({
                 msg: data.msg,
                 completed: false,
-                createdTime: myDate.toLocaleString()
+                createdTime: myDate.toLocaleString(),
+                isImportant: false
             });
             data.msg = '';
             update();
@@ -66,8 +68,9 @@ window.onload = function () {
 
         let overlay = document.getElementById('modal-overlay');
         let modifyInput = overlay.querySelector('.modal-data .change-todo');
+        let modal = overlay.querySelector('.modal-data');
         modifyInput.addEventListener('keyup', function (event) {
-            if (event.keyCode != 13)
+            if (event.keyCode != 27 && event.keyCode != 13)
                 return; // Enter
             if (modifyInput.value == '')
                 return;
@@ -78,9 +81,9 @@ window.onload = function () {
 
         //todo bigger blur
         modifyInput.addEventListener('blur', function (event) {
-            overlay.style.visibility =  "hidden";
+            overlay.style.visibility = "hidden";
             event.stopPropagation();
-        });
+        }, false);
 
         update();
     });
@@ -100,6 +103,17 @@ function update() {
     input.value = data.msg;
 
     uncompletedList.innerHTML = '';
+
+    let hammerUc = new Hammer(uncompletedList);
+    hammerUc.get('pan').set({
+        direction: Hammer.DIRECTION_ALL,
+        threshold: 30
+    });
+    hammerUc.on('pandown', function (ev) {
+        completeAll();
+    });
+
+
     data.items.filter(item => item.completed == false).forEach(
         (itemData, index) => {
             let item = getItem(itemData);
@@ -143,10 +157,22 @@ function update() {
     completedText.innerHTML = 'Unfinished ' + unfinishedCount;
 
     completedList.innerHTML = '';
+
+    let hammerC = new Hammer(completedList);
+    hammerC.get('pan').set({
+        direction: Hammer.DIRECTION_ALL,
+        threshold: 30
+    });
+    hammerC.on('pandown', function (ev) {
+        clearAllCompleted();
+    });
+
     data.items.filter(item => item.completed == true).forEach(
         (itemData, index) => {
             let item = getItem(itemData);
 
+            let todolabel = item.querySelector('.todo-label');
+            todolabel.classList.add("finished");
             let finishbox = item.querySelector('.toggle');
             finishbox.checked = true;
             finishbox.addEventListener('change', function () {
@@ -168,6 +194,21 @@ function update() {
         });
 }
 
+function completeAll()
+{
+    let data = model.data;
+    data.items.forEach(item => item.completed = true);
+    update();
+}
+
+function clearAllCompleted(){
+    let data = model.data;
+    data.items.filter(item => item.completed == true).forEach((itemData,index) => {
+        data.items.splice(index, 1);
+    });
+    update();
+}
+
 function getItem(itemData) {
     let item = document.createElement('li');
     item.classList.add("single-todo");
@@ -176,7 +217,7 @@ function getItem(itemData) {
 
     item.innerHTML = [
         '  <input class="toggle" type="checkbox">',
-        '  <label class="todo-label">' + itemData.msg + '</label>'
+        '  <label class="todo-label">' + itemData.msg + '</label>',
     ].join('');
     return item;
 }
