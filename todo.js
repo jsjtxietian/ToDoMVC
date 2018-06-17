@@ -93,6 +93,29 @@ window.onload = function () {
             event.stopPropagation();
         }, false);
 
+        let uncompletedList = $('.uncompleted-list');
+        let completedList = $('.completed-list');
+
+        let hammerUc = new Hammer(uncompletedList);
+        hammerUc.get('pan').set({
+            direction: Hammer.DIRECTION_ALL,
+            threshold: 20
+        });
+        hammerUc.on('pandown', function (ev) {
+            CorUCAll(true);
+        });
+
+        let hammerC = new Hammer(completedList);
+        hammerC.get('pan').set({
+            direction: Hammer.DIRECTION_ALL,
+            threshold: 30
+        });
+        hammerC.on('pandown', function (ev) {
+            clearAllCompleted();
+        });
+        hammerC.on('panup', function (ev) {
+            CorUCAll(false);
+        })
         update();
     });
 }
@@ -112,14 +135,15 @@ function update() {
 
     uncompletedList.innerHTML = '';
 
-    let hammerUc = new Hammer(uncompletedList);
-    hammerUc.get('pan').set({
-        direction: Hammer.DIRECTION_ALL,
-        threshold: 20
-    });
-    hammerUc.on('pandown', function (ev) {
-        CorUCAll(true);
-    });
+
+    // let hammerUc = new Hammer(uncompletedList);
+    // hammerUc.get('pan').set({
+    //     direction: Hammer.DIRECTION_ALL,
+    //     threshold: 20
+    // });
+    // hammerUc.on('pandown', function (ev) {
+    //     CorUCAll(true);
+    // });
 
 
     data.items.filter(item => item.completed == false).forEach(
@@ -166,17 +190,17 @@ function update() {
 
     completedList.innerHTML = '';
 
-    let hammerC = new Hammer(completedList);
-    hammerC.get('pan').set({
-        direction: Hammer.DIRECTION_ALL,
-        threshold: 30
-    });
-    hammerC.on('pandown', function (ev) {
-        clearAllCompleted();
-    });
-    hammerC.on('panup',function(ev){
-        CorUCAll(false);
-    })
+    // let hammerC = new Hammer(completedList);
+    // hammerC.get('pan').set({
+    //     direction: Hammer.DIRECTION_ALL,
+    //     threshold: 30
+    // });
+    // hammerC.on('pandown', function (ev) {
+    //     clearAllCompleted();
+    // });
+    // hammerC.on('panup', function (ev) {
+    //     CorUCAll(false);
+    // })
 
     data.items.filter(item => item.completed == true).forEach(
         (itemData, index) => {
