@@ -2,17 +2,17 @@ let GUID = getGUID();
 let recognition;
 let recognizing = false;
 
-if ('webkitSpeechRecognition' in window) {
-    recognition = new webkitSpeechRecognition();
-} else {
-    recognition = null;
-}
-
-
 //todo style block inlineblock
 //how to align things
 
 window.onload = function () {
+
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+    } else {
+        recognition = null;
+        console.warn('Speech input is not support on your device!');
+    }
 
     //slide
     let slideout = new Slideout({
@@ -34,10 +34,10 @@ window.onload = function () {
 
         //input binding
         let newTodo = $('.add-todo .input');
+        newTodo.value = data.msg;
+
         newTodo.addEventListener('keyup', function () {
             data.msg = newTodo.value;
-        });
-        newTodo.addEventListener('change', function () {
             model.flush();
         });
         newTodo.addEventListener('keyup', function (ev) {
@@ -55,7 +55,8 @@ window.onload = function () {
                 msg: data.msg,
                 completed: false,
                 createdTime: myDate.toLocaleString(),
-                isImportant: false
+                isImportant: false,
+                id: GUID(),
             });
             data.msg = '';
             update();
@@ -96,26 +97,30 @@ window.onload = function () {
         let uncompletedList = $('.uncompleted-list');
         let completedList = $('.completed-list');
 
-        let hammerUc = new Hammer(uncompletedList);
-        hammerUc.get('pan').set({
-            direction: Hammer.DIRECTION_ALL,
-            threshold: 20
-        });
-        hammerUc.on('pandown', function (ev) {
-            CorUCAll(true);
+        addSwipeEvent(uncompletedList, {
+            direction: "down",
+            userCallback: () => {
+                CorUCAll(true);
+            },
+            threshold: 10
+        })
+
+        addSwipeEvent(completedList, {
+            direction: "down",
+            userCallback: () => {
+                clearAllCompleted();
+            },
+            threshold: 10
         });
 
-        let hammerC = new Hammer(completedList);
-        hammerC.get('pan').set({
-            direction: Hammer.DIRECTION_ALL,
-            threshold: 30
+        addSwipeEvent(completedList, {
+            direction: "up",
+            userCallback: () => {
+                CorUCAll(false);
+            },
+            threshold: 10
         });
-        hammerC.on('pandown', function (ev) {
-            clearAllCompleted();
-        });
-        hammerC.on('panup', function (ev) {
-            CorUCAll(false);
-        })
+
         update();
     });
 }
@@ -135,27 +140,17 @@ function update() {
 
     uncompletedList.innerHTML = '';
 
-
-    // let hammerUc = new Hammer(uncompletedList);
-    // hammerUc.get('pan').set({
-    //     direction: Hammer.DIRECTION_ALL,
-    //     threshold: 20
-    // });
-    // hammerUc.on('pandown', function (ev) {
-    //     CorUCAll(true);
-    // });
-
-
     data.items.filter(item => item.completed == false).forEach(
         (itemData, index) => {
             let item = getItem(itemData);
 
-            let hammertime = new Hammer(item);
-            hammertime.get('pan').set({ threshold: 30 });
-            hammertime.on('panleft', function (ev) {
-                itemData.completed = true;
-                update();
-            });
+            addSwipeEvent(item, {
+                direction: "left",
+                userCallback: () => {
+                    itemData.completed = true;
+                    update();
+                }
+            })
 
             let finishbox = item.querySelector('.toggle');
             finishbox.checked = false;
@@ -190,21 +185,10 @@ function update() {
 
     completedList.innerHTML = '';
 
-    // let hammerC = new Hammer(completedList);
-    // hammerC.get('pan').set({
-    //     direction: Hammer.DIRECTION_ALL,
-    //     threshold: 30
-    // });
-    // hammerC.on('pandown', function (ev) {
-    //     clearAllCompleted();
-    // });
-    // hammerC.on('panup', function (ev) {
-    //     CorUCAll(false);
-    // })
-
     data.items.filter(item => item.completed == true).forEach(
         (itemData, index) => {
             let item = getItem(itemData);
+            let uid = itemData.id;
 
             let todolabel = item.querySelector('.todo-label');
             todolabel.classList.add("finished");
@@ -215,14 +199,18 @@ function update() {
                 update();
             }, false);
 
-            var hammertime = new Hammer(item);
-            hammertime.get('pan').set({ threshold: 30 });
-            hammertime.on('panleft', function (ev) {
-                if (ev.isFinal) {
-                    data.items.splice(index, 1);
-                    //console.log(ev);
+            addSwipeEvent(item, {
+                direction: "left",
+                userCallback: () => {
+                    for (let i = 0; i < data.items.length; i++) {
+                        if (data.items[i].id == uid) {
+                            data.items.splice(i, 1);
+                            break;
+                        }
+                    }
                     update();
-                }
+                },
+                threshold: 10
             });
 
             completedList.insertBefore(item, completedList.firstChild)
@@ -237,9 +225,21 @@ function CorUCAll(isComplete) {
 
 function clearAllCompleted() {
     let data = model.data;
-    data.items.filter(item => item.completed == true).forEach((itemData, index) => {
-        data.items.splice(index, 1);
+    let count = 0;
+    data.items.forEach(function (itemData, index) {
+        if (itemData.completed) {
+            count++;
+        }
     });
+
+    while (count--) {
+        for (let i = 0; i < data.items.length; i++) {
+            if (data.items[i].completed == true) {
+                data.items.splice(i, 1);
+                break;
+            }
+        }
+    }
     update();
 }
 
@@ -293,4 +293,85 @@ function getGUID() {
         return i;
     }
     return increment;
+}
+
+function addSwipeEvent(targetElement, userSetting) {
+
+    let Setting = {
+        threshold: 30,
+        maxTrembling: 20,
+        direction: "left",
+        userCallback: () => { console.log('defalut event!') }
+    };
+    Object.assign(Setting, { ...userSetting });
+
+    let oldTouch;
+    let initTouch;
+    let isContinue = true;
+
+    touchHandler = {
+        start: (ev) => {
+            initTouch = ev.touches[0];
+            oldTouch = initTouch;
+        },
+
+        move: (ev) => {
+            let newTouch = ev.changedTouches[0];
+            let clientRect = targetElement.getBoundingClientRect();
+
+            if (newTouch.clientX > clientRect.left
+                && newTouch.clientX < clientRect.right
+                && newTouch.clientY > clientRect.top
+                && newTouch.clientY < clientRect.bottom) {
+            }
+            else {
+                isContinue = false;
+            }
+            event.preventDefault();
+        },
+
+        end: (ev) => {
+            if (!isContinue) {
+                isContinue = true;
+                return;
+            }
+
+            let touchLeave = ev.changedTouches[0];
+            let left = touchLeave.clientX - initTouch.clientX;
+            let top = touchLeave.clientY - initTouch.clientY;
+
+            if (Setting.direction === "left") {
+                if ((left < Setting.threshold * (-1))
+                    && Math.abs(top) < Setting.maxTrembling) {
+                    console.log("success left");
+                    userSetting.userCallback();
+                }
+            }
+            else if (Setting.direction === "right") {
+                if ((left > Setting.threshold * (-1))
+                    && Math.abs(top) < Setting.maxTrembling) {
+                    console.log("success right");
+                    userSetting.userCallback();
+                }
+            }
+            else if (Setting.direction === "up") {
+                if ((top < Setting.threshold * (-1))
+                    && Math.abs(left) < Setting.maxTrembling) {
+                    console.log("success up");
+                    userSetting.userCallback();
+                }
+            }
+            else if (Setting.direction === "down") {
+                if ((top > Setting.threshold)
+                    && Math.abs(left) < Setting.maxTrembling) {
+                    console.log("success down");
+                    userSetting.userCallback();
+                }
+            }
+        }
+    }
+    targetElement.addEventListener('touchstart', touchHandler.start, false);
+    targetElement.addEventListener('touchmove', touchHandler.move, false);
+    targetElement.addEventListener('touchend', touchHandler.end, false);
+    targetElement.addEventListener('touchcancel', touchHandler.cancel, false);
 }
