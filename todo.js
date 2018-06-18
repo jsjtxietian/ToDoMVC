@@ -1,33 +1,13 @@
 let GUID = getGUID();
-let recognition;
-let recognizing = false;
 
-//todo style block inlineblock
-//how to align things
+//todo how to align things
 
 window.onload = function () {
 
-    if ('webkitSpeechRecognition' in window) {
-        recognition = new webkitSpeechRecognition();
-    } else {
-        recognition = null;
-        console.warn('Speech input is not support on your device!');
-    }
-
-    //slide
-    let slideout = new Slideout({
-        'panel': document.getElementById('panel'),
-        'menu': document.getElementById('menu'),
-        'padding': 256,
-        'tolerance': 70
-    });
-
-    // Toggle button
-    document.querySelector('.toggle-button').addEventListener('click', function () {
-        slideout.toggle();
-    });
-
+    initSlide();
     initSpeechRec();
+    initModal();
+    //todo filter
 
     model.init(function () {
         let data = model.data;
@@ -62,38 +42,6 @@ window.onload = function () {
             update();
         }, false);
 
-        if (recognition) {
-            let speechbutton = $('.add-todo .speech-icon');
-            speechbutton.addEventListener('click', function (event) {
-                if (recognizing) {
-                    recognition.stop();
-                    speechbutton.src = "./img/before.png";
-                    return;
-                }
-                speechbutton.src = "./img/after.png";
-                recognition.start();
-            })
-        }
-
-        let overlay = document.getElementById('modal-overlay');
-        let modifyInput = overlay.querySelector('.modal-data .change-todo');
-        let modal = overlay.querySelector('.modal-data');
-        modifyInput.addEventListener('keyup', function (event) {
-            if (event.keyCode != 27 && event.keyCode != 13)
-                return; // Enter
-            if (modifyInput.value == '')
-                return;
-            modifyInput.finish(modifyInput.value);
-            overlay.style.visibility = "hidden";
-            update();
-        }, false);
-
-        //todo bigger blur
-        modifyInput.addEventListener('blur', function (event) {
-            overlay.style.visibility = "hidden";
-            event.stopPropagation();
-        }, false);
-
         let uncompletedList = $('.uncompleted-list');
         let completedList = $('.completed-list');
 
@@ -124,6 +72,7 @@ window.onload = function () {
         update();
     });
 }
+
 
 function update() {
     model.flush();
@@ -217,6 +166,7 @@ function update() {
         });
 }
 
+//set all item to be done or not done
 function CorUCAll(isComplete) {
     let data = model.data;
     data.items.forEach(item => item.completed = isComplete);
@@ -243,6 +193,8 @@ function clearAllCompleted() {
     update();
 }
 
+//get a tempalte item 
+//bu used in update function
 function getItem(itemData) {
     let item = document.createElement('li');
     item.classList.add("single-todo");
@@ -256,24 +208,55 @@ function getItem(itemData) {
     return item;
 }
 
+//speech only support in chrome
+//todo bug fix
 function initSpeechRec() {
-    recognition.continuous = false;
-    recognition.lang = 'en-US';
-    recognition.onstart = function () {
-        recognizing = true;
-    };
 
-    recognition.onend = function () {
-        recognizing = false;
-        let speechbutton = $('.add-todo .speech-icon');
-        speechbutton.src = "./img/before.png";
-    };
+    if ('webkitSpeechRecognition' in window) {
+        if ('webkitSpeechRecognition' in window) {
+            // window.Ajax.get("http://www.google.com", {
+            //     onSuccess: () => {
+            //         let recognition;
+            //         let recognizing = false;
+            //         recognition = new webkitSpeechRecognition();
+            //         recognition.continuous = false;
+            //         recognition.lang = 'en-US';
+            //         recognition.onstart = function () {
+            //             recognizing = true;
+            //         };
 
-    recognition.onresult = function (event) {
-        $('.input').value = event.results[0][0].transcript;
-        let speechbutton = $('.add-todo .speech-icon');
-        speechbutton.src = "./img/before.png";
-    };
+            //         recognition.onend = function () {
+            //             recognizing = false;
+            //             let speechbutton = $('.add-todo .speech-icon');
+            //             speechbutton.src = "./img/before.png";
+            //         };
+
+            //         recognition.onresult = function (event) {
+            //             $('.input').value = event.results[0][0].transcript;
+            //             let speechbutton = $('.add-todo .speech-icon');
+            //             speechbutton.src = "./img/before.png";
+            //         };
+
+            //         let speechbutton = $('.add-todo .speech-icon');
+            //         speechbutton.addEventListener('click', function (event) {
+            //             if (recognizing) {
+            //                 recognition.stop();
+            //                 speechbutton.src = "./img/before.png";
+            //                 return;
+            //             }
+            //             speechbutton.src = "./img/after.png";
+            //             recognition.start();
+            //         }, false);
+            //     },
+            //     onFailure: () => {
+            //         console.warn("you are required to get access to google to use speech input");
+            //     }
+            // });
+        }
+    }
+    else{
+        console.warn("you are required to use chrome to use speech input");        
+    }
 }
 
 //fucntional functions
@@ -295,6 +278,7 @@ function getGUID() {
     return increment;
 }
 
+//swipe event
 function addSwipeEvent(targetElement, userSetting) {
 
     let Setting = {
@@ -327,7 +311,14 @@ function addSwipeEvent(targetElement, userSetting) {
             else {
                 isContinue = false;
             }
-            event.preventDefault();
+
+            if (event.cancelable) {
+                // 判断默认行为是否已经被禁用
+                if (!event.defaultPrevented) {
+                    event.preventDefault();
+                }
+            }
+
         },
 
         end: (ev) => {
@@ -348,7 +339,7 @@ function addSwipeEvent(targetElement, userSetting) {
                 }
             }
             else if (Setting.direction === "right") {
-                if ((left > Setting.threshold * (-1))
+                if ((left > Setting.threshold)
                     && Math.abs(top) < Setting.maxTrembling) {
                     console.log("success right");
                     userSetting.userCallback();
@@ -374,4 +365,59 @@ function addSwipeEvent(targetElement, userSetting) {
     targetElement.addEventListener('touchmove', touchHandler.move, false);
     targetElement.addEventListener('touchend', touchHandler.end, false);
     targetElement.addEventListener('touchcancel', touchHandler.cancel, false);
+}
+
+function initSlide() {
+    let body = $('.body-style');
+    addSwipeEvent(body, {
+        direction: "right",
+        userCallback: () => {
+            let panel = $('.panel');
+            panel.classList.remove('move-left');
+            panel.classList.add('move-right');
+        }
+    });
+
+    addSwipeEvent(body, {
+        direction: "left",
+        userCallback: () => {
+            let panel = $('.panel');
+            panel.classList.remove('move-right');
+            panel.classList.add('move-left');
+        }
+    });
+
+    // Toggle button
+    document.querySelector('.toggle-button').addEventListener('click', function () {
+        let panel = $('.panel');
+        if (panel.classList.contains("move-right")) {
+            panel.classList.remove('move-right');
+            panel.classList.add('move-left');
+        }
+        else {
+            panel.classList.remove('move-left');
+            panel.classList.add('move-right');
+        }
+    });
+}
+
+function initModal() {
+    let overlay = document.getElementById('modal-overlay');
+    let modifyInput = overlay.querySelector('.modal-data .change-todo');
+
+    modifyInput.addEventListener('keyup', function (event) {
+        if (event.keyCode != 27 && event.keyCode != 13)
+            return; // Enter
+        if (modifyInput.value == '')
+            return;
+        modifyInput.finish(modifyInput.value);
+        overlay.style.visibility = "hidden";
+        update();
+    }, false);
+
+    //todo bigger blur
+    modifyInput.addEventListener('blur', function (event) {
+        overlay.style.visibility = "hidden";
+        event.stopPropagation();
+    }, false);
 }

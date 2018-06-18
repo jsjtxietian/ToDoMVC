@@ -3,7 +3,6 @@
 
 <head>
     <meta content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1" name="viewport" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style.css">
     <link rel="stylesheet" type="text/css" href="./normalize.css">
 </head>
@@ -12,9 +11,9 @@
     Try to finish them all !
 </title>
 
-<body>
-    <nav id="menu">
+<body class="body-style">
 
+    <nav class="menu">
         <div class="instruction-block">
             <span class="instruction">Instructions</span>
             <img src="./img/instruction.png" class="instruction-img" alt="">
@@ -34,6 +33,7 @@
             <img src="./img/filter.svg" class="instruction-img" alt="">
         </div>
 
+        
         <ul class="filters">
             <li>
                 <a class="selected">All</a>
@@ -51,6 +51,7 @@
             <img src="./img/batch.svg" class="instruction-img" alt="">
         </div>
 
+
     </nav>
 
     <div id="modal-overlay">
@@ -60,7 +61,7 @@
         </div>
     </div>
 
-    <main id="panel">
+    <main class="panel">
         <header class="head">
             <button class="toggle-button">
                 <img src="./img/menu.png" class="button-img" alt="☰">
@@ -92,6 +93,7 @@
 
     </main>
 
+    <script src="./ajax.js"></script>
     <script src="./todo.js"></script>
     <script src="./model.js"></script>
     <script src="./provider.js"></script>
