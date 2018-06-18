@@ -146,8 +146,6 @@
 .main-body{
   margin: 0 9% ;
 }
-
-
 .add-todo .img-add{
   vertical-align: middle;
   width: 8.5%;
@@ -159,46 +157,6 @@
     background-color: rgb(30, 221, 196);
     overflow: hidden;
 }
-
-/* .slideout-menu {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 256px;
-  min-height: 100vh;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  z-index: 0;
-  display: none;
-}
-
-.slideout-menu-left {
-  left: 0;
-}
-
-.slideout-menu-right {
-  right: 0;
-}
-
-.slideout-panel {
-  position: relative;
-  z-index: 1;
-  will-change: transform;
-  background-color: rgb(157, 197, 157);
-  min-height: 100vh;
-  height: 100%;
-}
-
-.slideout-open,
-.slideout-open body,
-.slideout-open .slideout-panel {
-  overflow: hidden;
-}
-
-.slideout-open .slideout-menu {
-  display: block;
-}
-*/
 
 .toggle-button{
     background: transparent;
@@ -240,4 +198,12 @@
 .move-right{
   transform: translateX(256px);
   transition-duration: 0.8s;
+}
+
+.filter-area{
+  text-align: center;
+}
+
+.batch{
+  text-align: center;
 }

@@ -1,7 +1,5 @@
 let GUID = getGUID();
 
-//todo how to align things
-
 window.onload = function () {
 
     initSlide();
@@ -69,10 +67,13 @@ window.onload = function () {
             threshold: 10
         });
 
+        initFilter();
+        initToggle();
+        initClear();
+
         update();
     });
 }
-
 
 function update() {
     model.flush();
@@ -83,87 +84,92 @@ function update() {
     let completedText = $('.completed-count');
     let input = $('.add-todo .input');
     let overlay = document.getElementById('modal-overlay');
-    let modifyInput = overlay.querySelector('.modal-data .change-todo');
 
     input.value = data.msg;
 
     uncompletedList.innerHTML = '';
 
-    data.items.filter(item => item.completed == false).forEach(
-        (itemData, index) => {
-            let item = getItem(itemData);
+    if (data.filter == "All" || data.filter == "Active") {
+        data.items.filter(item => item.completed == false).forEach(
+            (itemData, index) => {
+                let item = getItem(itemData);
 
-            addSwipeEvent(item, {
-                direction: "left",
-                userCallback: () => {
-                    itemData.completed = true;
+                addSwipeEvent(item, {
+                    direction: "left",
+                    userCallback: () => {
+                        itemData.completed = true;
+                        update();
+                    }
+                });
+
+                let finishbox = item.querySelector('.toggle');
+                finishbox.checked = false;
+                finishbox.addEventListener('click', function (event) {
+                    itemData.completed = !itemData.completed;
                     update();
-                }
-            })
+                    event.stopPropagation();
+                }, false);
 
-            let finishbox = item.querySelector('.toggle');
-            finishbox.checked = false;
-            finishbox.addEventListener('click', function (event) {
-                itemData.completed = !itemData.completed;
-                update();
-                event.stopPropagation();
-            }, false);
+                let editableItems = item.querySelector('.todo-label');
 
-            let editableItems = item.querySelector('.todo-label');
+                editableItems.addEventListener('click', function (event) {
+                    overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
 
-            editableItems.addEventListener('click', function (event) {
-                overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
+                    let modal = overlay.querySelector('.modal-data');
+                    let modifyInput = overlay.querySelector('.modal-data .change-todo');
+                    modifyInput.value = this.innerHTML;
+                    modifyInput.focus();
+                    modifyInput.finish = function (message) {
+                        itemData.msg = message;
+                        update();
+                    }
+                    //todo css
+                }, false);
 
-                let modal = overlay.querySelector('.modal-data');
-                let modifyInput = overlay.querySelector('.modal-data .change-todo');
-                modifyInput.value = this.innerHTML;
-                modifyInput.focus();
-                modifyInput.finish = function (message) {
-                    itemData.msg = message;
-                    update();
-                }
-                //todo css
-            }, false);
-
-            uncompletedList.insertBefore(item, uncompletedList.firstChild)
-        });
-
-    let unfinishedCount = 0;
-    unfinishedCount = data.items.filter(item => item.completed == true).length;
-    completedText.innerHTML = 'Unfinished ' + unfinishedCount;
+                uncompletedList.insertBefore(item, uncompletedList.firstChild)
+            });
+    }
 
     completedList.innerHTML = '';
+    completedText.innerHTML = '';
 
-    data.items.filter(item => item.completed == true).forEach(
-        (itemData, index) => {
-            let item = getItem(itemData);
-            let uid = itemData.id;
+    if (data.filter == "All" || data.filter == "Completed") {
 
-            let todolabel = item.querySelector('.todo-label');
-            todolabel.classList.add("finished");
-            let finishbox = item.querySelector('.toggle');
-            finishbox.checked = true;
-            finishbox.addEventListener('change', function () {
-                itemData.completed = !itemData.completed;
-                update();
-            }, false);
+        let unfinishedCount = 0;
+        unfinishedCount = data.items.filter(item => item.completed == true).length;
+        completedText.innerHTML = 'Unfinished ' + unfinishedCount;
 
-            addSwipeEvent(item, {
-                direction: "left",
-                userCallback: () => {
-                    for (let i = 0; i < data.items.length; i++) {
-                        if (data.items[i].id == uid) {
-                            data.items.splice(i, 1);
-                            break;
-                        }
-                    }
+        data.items.filter(item => item.completed == true).forEach(
+            (itemData, index) => {
+                let item = getItem(itemData);
+                let uid = itemData.id;
+
+                let todolabel = item.querySelector('.todo-label');
+                todolabel.classList.add("finished");
+                let finishbox = item.querySelector('.toggle');
+                finishbox.checked = true;
+                finishbox.addEventListener('change', function () {
+                    itemData.completed = !itemData.completed;
                     update();
-                },
-                threshold: 10
-            });
+                }, false);
 
-            completedList.insertBefore(item, completedList.firstChild)
-        });
+                addSwipeEvent(item, {
+                    direction: "left",
+                    userCallback: () => {
+                        for (let i = 0; i < data.items.length; i++) {
+                            if (data.items[i].id == uid) {
+                                data.items.splice(i, 1);
+                                break;
+                            }
+                        }
+                        update();
+                    },
+                    threshold: 10
+                });
+
+                completedList.insertBefore(item, completedList.firstChild)
+            });
+    }
 }
 
 //set all item to be done or not done
@@ -254,8 +260,8 @@ function initSpeechRec() {
             // });
         }
     }
-    else{
-        console.warn("you are required to use chrome to use speech input");        
+    else {
+        console.warn("you are required to use chrome to use speech input");
     }
 }
 
@@ -420,4 +426,39 @@ function initModal() {
         overlay.style.visibility = "hidden";
         event.stopPropagation();
     }, false);
+}
+
+function initFilter() {
+    let data = model.data;
+    let filters = document.getElementsByName("filter");
+
+    filters.forEach((item) => {
+        if(item.value == data.filter){
+            item.checked = true;
+        }
+        item.addEventListener('change', () => {
+            data.filter = item.value;
+            update();
+        });
+    });
+}
+
+function initToggle(){
+    let checked = true;
+    let toggleAll = $('.toggle-all-button');
+    let data = model.data;
+
+    toggleAll.addEventListener('click',()=>{
+        data.items.forEach((itemData)=>{
+            itemData.completed = checked;
+        });
+        checked = !checked;
+        update();
+    });
+}
+
+function initClear(){
+    let clear = $('.clear-completed-button');
+    let data = model.data;
+    clear.addEventListener('click',clearAllCompleted);
 }

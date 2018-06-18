@@ -14,43 +14,41 @@
 <body class="body-style">
 
     <nav class="menu">
+
         <div class="instruction-block">
             <span class="instruction">Instructions</span>
             <img src="./img/instruction.png" class="instruction-img" alt="">
         </div>
-
         <ul class="hints">
             <li class="single-hint">swipe right to open slide bar and left to close it</li>
             <li class="single-hint">swipe left on the single todo to complete it (or delete it if it's completed)</li>
             <li class="single-hint">swipe down on the list to complete all or delete them if they'are completed</li>
             <li class="single-hint">siwpe up on the completed list to uncomplete all</li>
             <li class="single-hint">tap the single todo to modify it</li>
-            <li class="single-hint">tap the microphone to use voice input(only in pc chrome)</li>
+            <li class="single-hint">tap the microphone to use voice input (only in pc chrome)</li>
         </ul>
 
         <div class="instruction-block">
             <span class="instruction">Filters</span>
             <img src="./img/filter.svg" class="instruction-img" alt="">
         </div>
-
-        
-        <ul class="filters">
-            <li>
-                <a class="selected">All</a>
-            </li>
-            <li>
-                <a class="">Active</a>
-            </li>
-            <li>
-                <a class="">Completed</a>
-            </li>
-        </ul>
+        <div class="filter-area">
+            <input type="radio" name="filter" value='All' id="All-filter">
+            <label for="All-filter">All</label>
+            <input type="radio" name="filter" value='Active' id='Active-filter'>
+            <label for="Active-filter">Active</label>
+            <input type="radio" name="filter" value='Completed' id='Complete-filter'>
+            <label for="Complete-filter">Completed</label>
+        </div>
 
         <div class="instruction-block">
             <span class="instruction">Batch</span>
             <img src="./img/batch.svg" class="instruction-img" alt="">
         </div>
-
+        <div class="batch">
+            <button class="toggle-all-button">Toggle All</button>
+            <button class="clear-completed-button">Clear Completed</button>
+        </div>
 
     </nav>
 
@@ -99,5 +97,4 @@
     <script src="./provider.js"></script>
 
 </body>
-
 </html>
