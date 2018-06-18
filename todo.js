@@ -207,57 +207,59 @@ function getItem(itemData) {
     let id = 'item' + GUID();
     item.setAttribute('id', id);
 
-    item.innerHTML = [
-        '  <input class="toggle" type="checkbox">',
-        '  <label class="todo-label">' + itemData.msg + '</label>',
-    ].join('');
+    // item.innerHTML = [
+    //     '  <input class="toggle" type="checkbox">',
+    //     '  <label class="todo-label">' + itemData.msg + '</label>',
+    // ].join('');
+
+    let uid = GUID();
+    item.innerHTML = `<input type="checkbox" class="toggle" id="${uid}"> <label class="new-checkbox" for="${uid}"></label> <label class="todo-label">${itemData.msg}</label>`;
     return item;
 }
 
 //speech only support in chrome
-//todo bug fix
 function initSpeechRec() {
 
     if ('webkitSpeechRecognition' in window) {
         if ('webkitSpeechRecognition' in window) {
-            // window.Ajax.get("http://www.google.com", {
-            //     onSuccess: () => {
-            //         let recognition;
-            //         let recognizing = false;
-            //         recognition = new webkitSpeechRecognition();
-            //         recognition.continuous = false;
-            //         recognition.lang = 'en-US';
-            //         recognition.onstart = function () {
-            //             recognizing = true;
-            //         };
+            window.Ajax.get("http://www.google.com", {
+                onSuccess: () => {
+                    let recognition;
+                    let recognizing = false;
+                    recognition = new webkitSpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.lang = 'en-US';
+                    recognition.onstart = function () {
+                        recognizing = true;
+                    };
 
-            //         recognition.onend = function () {
-            //             recognizing = false;
-            //             let speechbutton = $('.add-todo .speech-icon');
-            //             speechbutton.src = "./img/before.png";
-            //         };
+                    recognition.onend = function () {
+                        recognizing = false;
+                        let speechbutton = $('.add-todo .speech-icon');
+                        speechbutton.src = "./img/before.png";
+                    };
 
-            //         recognition.onresult = function (event) {
-            //             $('.input').value = event.results[0][0].transcript;
-            //             let speechbutton = $('.add-todo .speech-icon');
-            //             speechbutton.src = "./img/before.png";
-            //         };
+                    recognition.onresult = function (event) {
+                        $('.input').value = event.results[0][0].transcript;
+                        let speechbutton = $('.add-todo .speech-icon');
+                        speechbutton.src = "./img/before.png";
+                    };
 
-            //         let speechbutton = $('.add-todo .speech-icon');
-            //         speechbutton.addEventListener('click', function (event) {
-            //             if (recognizing) {
-            //                 recognition.stop();
-            //                 speechbutton.src = "./img/before.png";
-            //                 return;
-            //             }
-            //             speechbutton.src = "./img/after.png";
-            //             recognition.start();
-            //         }, false);
-            //     },
-            //     onFailure: () => {
-            //         console.warn("you are required to get access to google to use speech input");
-            //     }
-            // });
+                    let speechbutton = $('.add-todo .speech-icon');
+                    speechbutton.addEventListener('click', function (event) {
+                        if (recognizing) {
+                            recognition.stop();
+                            speechbutton.src = "./img/before.png";
+                            return;
+                        }
+                        speechbutton.src = "./img/after.png";
+                        recognition.start();
+                    }, false);
+                },
+                onFailure: () => {
+                    console.warn("you are required to get access to google to use speech input");
+                }
+            });
         }
     }
     else {

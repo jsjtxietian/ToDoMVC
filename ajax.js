@@ -14,6 +14,7 @@
       if (opt.cached) {
         url += (url.indexOf('?') > -1 ? '&' : '?') + new Date().getTime() + 'r';
       }
+      
       var request = new XMLHttpRequest();
       request.onreadystatechange = function() {
         if (request.readyState === XMLHttpRequest.DONE) {
