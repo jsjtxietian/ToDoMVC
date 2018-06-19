@@ -37,7 +37,7 @@ window.onload = function () {
                 id: GUID(),
             });
             data.msg = '';
-            update();
+            Update();
         }, false);
 
         let uncompletedList = $('.uncompleted-list');
@@ -46,7 +46,7 @@ window.onload = function () {
         addSwipeEvent(uncompletedList, {
             direction: "down",
             userCallback: () => {
-                CorUCAll(true);
+                toggleAll(true);
             },
             threshold: 10
         })
@@ -62,7 +62,7 @@ window.onload = function () {
         addSwipeEvent(completedList, {
             direction: "up",
             userCallback: () => {
-                CorUCAll(false);
+                toggleAll(false);
             },
             threshold: 10
         });
@@ -71,8 +71,167 @@ window.onload = function () {
         initToggle();
         initClear();
 
-        update();
+        Update();
     });
+}
+
+function Update(action = null) {
+    if (action) {
+        if (action.type == "complete-one") {
+            let uncompletedList = $('.uncompleted-list');
+            let id = action.id;
+            //delete old one
+            uncompletedList.childNodes.forEach((node) => {
+                if (node.id == id) {
+                    node.remove();
+                }
+            });
+            //create new one
+            model.data.items.forEach((itemData) => {
+                if (itemData.id == id) {
+                    createCompleted(itemData);
+                }
+            });
+            return;
+        }
+        else if (action.type == "cancel-complete-one") {
+            let completedList = $('.completed-list');
+            let id = action.id;
+            //delete old one
+            completedList.childNodes.forEach((node) => {
+                if (node.id == id) {
+                    node.remove();
+                }
+            });
+            //create new one
+            model.data.items.forEach((itemData) => {
+                if (itemData.id == id) {
+                    createUncomplete(itemData);
+                }
+            });
+            return;
+        }
+        else if (action.type == "delete-one") {
+            let completedList = $('.completed-list');
+            let id = action.id;
+            //delete old one
+            completedList.childNodes.forEach((node) => {
+                if (node.id == id) {
+                    node.remove();
+                }
+            });
+        }
+        else if(action.type == "modify"){
+            let uncompletedList = $('.uncompleted-list');
+            let id = action.id;
+            uncompletedList.childNodes.forEach((node) => {
+                if (node.id == id) {
+                    let todoContent = node.querySelector('.todo-label');
+                    todoContent.innerHTML = action.msg;
+                }
+            });
+        }
+    } else {
+        update();
+    }
+
+    model.flush();
+}
+
+function createCompleted(itemData) {
+    let completedList = $('.completed-list');
+    let data = model.data;
+
+    let item = getItem(itemData);
+    let uid = itemData.id;
+
+    let todolabel = item.querySelector('.todo-label');
+    todolabel.classList.add("finished");
+    let finishbox = item.querySelector('.toggle');
+    finishbox.checked = true;
+    finishbox.addEventListener('change', function () {
+        itemData.completed = !itemData.completed;
+        Update({
+            id: itemData.id,
+            type: "cancel-complete-one"
+        });
+    }, false);
+
+    addSwipeEvent(item, {
+        direction: "left",
+        userCallback: () => {
+            for (let i = 0; i < data.items.length; i++) {
+                if (data.items[i].id == uid) {
+                    data.items.splice(i, 1);
+                    break;
+                }
+            }
+            Update({
+                type: "delete-one",
+                id: itemData.id
+            });
+        },
+        threshold: 10
+    });
+    completedList.insertBefore(item, completedList.firstChild);
+
+    updateCount();
+}
+
+function createUncomplete(itemData) {
+    let uncompletedList = $('.uncompleted-list');
+    let item = getItem(itemData);
+    let overlay = document.getElementById('modal-overlay');
+
+    addSwipeEvent(item, {
+        direction: "left",
+        userCallback: () => {
+            itemData.completed = true;
+            Update({
+                type: "complete-one",
+                id: item.id,
+            });
+        }
+    });
+
+    let finishbox = item.querySelector('.toggle');
+    finishbox.checked = false;
+    finishbox.addEventListener('change', function (event) {
+        itemData.completed = !itemData.completed;
+        Update();
+        event.stopPropagation();
+    }, false);
+
+    let editableItems = item.querySelector('.todo-label');
+
+    editableItems.addEventListener('click', function (event) {
+        overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
+
+        let modal = overlay.querySelector('.modal-data');
+        let modifyInput = overlay.querySelector('.modal-data .change-todo');
+        modifyInput.value = this.innerHTML;
+        modifyInput.focus();
+        modifyInput.finish = function (message) {
+            itemData.msg = message;
+            Update({
+                type:"modify",
+                id : itemData.id,
+                msg : itemData.msg
+            });
+        }
+        //todo css
+    }, false);
+
+    uncompletedList.insertBefore(item, uncompletedList.firstChild);
+}
+
+function updateCount() {
+    let data = model.data;
+    let completedText = $('.completed-count');
+    completedText.innerHTML = '';
+    let unfinishedCount = 0;
+    unfinishedCount = data.items.filter(item => item.completed == true).length;
+    completedText.innerHTML = 'Unfinished ' + unfinishedCount;
 }
 
 function update() {
@@ -81,9 +240,7 @@ function update() {
     let data = model.data;
     let uncompletedList = $('.uncompleted-list');
     let completedList = $('.completed-list');
-    let completedText = $('.completed-count');
     let input = $('.add-todo .input');
-    let overlay = document.getElementById('modal-overlay');
 
     input.value = data.msg;
 
@@ -91,92 +248,27 @@ function update() {
 
     if (data.filter == "All" || data.filter == "Active") {
         data.items.filter(item => item.completed == false).forEach(
-            (itemData, index) => {
-                let item = getItem(itemData);
-
-                addSwipeEvent(item, {
-                    direction: "left",
-                    userCallback: () => {
-                        itemData.completed = true;
-                        update();
-                    }
-                });
-
-                let finishbox = item.querySelector('.toggle');
-                finishbox.checked = false;
-                finishbox.addEventListener('click', function (event) {
-                    itemData.completed = !itemData.completed;
-                    update();
-                    event.stopPropagation();
-                }, false);
-
-                let editableItems = item.querySelector('.todo-label');
-
-                editableItems.addEventListener('click', function (event) {
-                    overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
-
-                    let modal = overlay.querySelector('.modal-data');
-                    let modifyInput = overlay.querySelector('.modal-data .change-todo');
-                    modifyInput.value = this.innerHTML;
-                    modifyInput.focus();
-                    modifyInput.finish = function (message) {
-                        itemData.msg = message;
-                        update();
-                    }
-                    //todo css
-                }, false);
-
-                uncompletedList.insertBefore(item, uncompletedList.firstChild)
+            (itemData) => {
+                createUncomplete(itemData);
             });
     }
 
     completedList.innerHTML = '';
-    completedText.innerHTML = '';
 
     if (data.filter == "All" || data.filter == "Completed") {
-
-        let unfinishedCount = 0;
-        unfinishedCount = data.items.filter(item => item.completed == true).length;
-        completedText.innerHTML = 'Unfinished ' + unfinishedCount;
-
         data.items.filter(item => item.completed == true).forEach(
-            (itemData, index) => {
-                let item = getItem(itemData);
-                let uid = itemData.id;
-
-                let todolabel = item.querySelector('.todo-label');
-                todolabel.classList.add("finished");
-                let finishbox = item.querySelector('.toggle');
-                finishbox.checked = true;
-                finishbox.addEventListener('change', function () {
-                    itemData.completed = !itemData.completed;
-                    update();
-                }, false);
-
-                addSwipeEvent(item, {
-                    direction: "left",
-                    userCallback: () => {
-                        for (let i = 0; i < data.items.length; i++) {
-                            if (data.items[i].id == uid) {
-                                data.items.splice(i, 1);
-                                break;
-                            }
-                        }
-                        update();
-                    },
-                    threshold: 10
-                });
-
-                completedList.insertBefore(item, completedList.firstChild)
+            (itemData) => {
+                createCompleted(itemData);
             });
     }
+    updateCount();
 }
 
 //set all item to be done or not done
-function CorUCAll(isComplete) {
+function toggleAll(isComplete) {
     let data = model.data;
     data.items.forEach(item => item.completed = isComplete);
-    update();
+    Update();
 }
 
 function clearAllCompleted() {
@@ -196,7 +288,7 @@ function clearAllCompleted() {
             }
         }
     }
-    update();
+    Update();
 }
 
 //get a tempalte item 
@@ -204,13 +296,7 @@ function clearAllCompleted() {
 function getItem(itemData) {
     let item = document.createElement('li');
     item.classList.add("single-todo");
-    let id = 'item' + GUID();
-    item.setAttribute('id', id);
-
-    // item.innerHTML = [
-    //     '  <input class="toggle" type="checkbox">',
-    //     '  <label class="todo-label">' + itemData.msg + '</label>',
-    // ].join('');
+    item.setAttribute('id', itemData.id);
 
     let uid = GUID();
     item.innerHTML = `<input type="checkbox" class="toggle" id="${uid}"> <label class="new-checkbox" for="${uid}"></label> <label class="todo-label">${itemData.msg}</label>`;
@@ -342,28 +428,24 @@ function addSwipeEvent(targetElement, userSetting) {
             if (Setting.direction === "left") {
                 if ((left < Setting.threshold * (-1))
                     && Math.abs(top) < Setting.maxTrembling) {
-                    console.log("success left");
                     userSetting.userCallback();
                 }
             }
             else if (Setting.direction === "right") {
                 if ((left > Setting.threshold)
                     && Math.abs(top) < Setting.maxTrembling) {
-                    console.log("success right");
                     userSetting.userCallback();
                 }
             }
             else if (Setting.direction === "up") {
                 if ((top < Setting.threshold * (-1))
                     && Math.abs(left) < Setting.maxTrembling) {
-                    console.log("success up");
                     userSetting.userCallback();
                 }
             }
             else if (Setting.direction === "down") {
                 if ((top > Setting.threshold)
                     && Math.abs(left) < Setting.maxTrembling) {
-                    console.log("success down");
                     userSetting.userCallback();
                 }
             }
@@ -420,7 +502,7 @@ function initModal() {
             return;
         modifyInput.finish(modifyInput.value);
         overlay.style.visibility = "hidden";
-        update();
+        Update();
     }, false);
 
     //todo bigger blur
@@ -435,32 +517,32 @@ function initFilter() {
     let filters = document.getElementsByName("filter");
 
     filters.forEach((item) => {
-        if(item.value == data.filter){
+        if (item.value == data.filter) {
             item.checked = true;
         }
         item.addEventListener('change', () => {
             data.filter = item.value;
-            update();
+            Update();
         });
     });
 }
 
-function initToggle(){
+function initToggle() {
     let checked = true;
     let toggleAll = $('.toggle-all-button');
     let data = model.data;
 
-    toggleAll.addEventListener('click',()=>{
-        data.items.forEach((itemData)=>{
+    toggleAll.addEventListener('click', () => {
+        data.items.forEach((itemData) => {
             itemData.completed = checked;
         });
         checked = !checked;
-        update();
+        Update();
     });
 }
 
-function initClear(){
+function initClear() {
     let clear = $('.clear-completed-button');
     let data = model.data;
-    clear.addEventListener('click',clearAllCompleted);
+    clear.addEventListener('click', clearAllCompleted);
 }

@@ -98,6 +98,8 @@
   word-break: break-all;
   display: block;
   margin-left: 3%;
+  font-family: monospace;
+  flex-grow: 1;
 }
 
 .single-todo .finished{
