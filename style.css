@@ -11,11 +11,12 @@
 
 .modal-data{ 
   width:300px;
-  margin: 100px auto; 
+  margin: 300px auto; 
   background-color: #fff; 
-  border:1px solid #000; 
   padding:15px; 
   text-align:center; 
+  box-shadow: 2px 2px 24px -7px black;
+  border-radius: 5px;
 } 
 
 .filters{
@@ -228,10 +229,16 @@
   background: white;
   border: 1px gray solid;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 input[type="checkbox"]{
   display: none;
 }
 
-
+input[type="checkbox"]:checked+label::before{
+  content:"✓";
+  font-size: 22pt;
+}

@@ -222,7 +222,7 @@ function initSpeechRec() {
 
     if ('webkitSpeechRecognition' in window) {
         if ('webkitSpeechRecognition' in window) {
-            window.Ajax.get("http://www.google.com", {
+            window.Ping("http://www.google.com", {
                 onSuccess: () => {
                     let recognition;
                     let recognizing = false;
@@ -236,23 +236,23 @@ function initSpeechRec() {
                     recognition.onend = function () {
                         recognizing = false;
                         let speechbutton = $('.add-todo .speech-icon');
-                        speechbutton.src = "./img/before.png";
+                        speechbutton.src = "./img/before.svg";
                     };
 
                     recognition.onresult = function (event) {
                         $('.input').value = event.results[0][0].transcript;
                         let speechbutton = $('.add-todo .speech-icon');
-                        speechbutton.src = "./img/before.png";
+                        speechbutton.src = "./img/before.svg";
                     };
 
                     let speechbutton = $('.add-todo .speech-icon');
                     speechbutton.addEventListener('click', function (event) {
                         if (recognizing) {
                             recognition.stop();
-                            speechbutton.src = "./img/before.png";
+                            speechbutton.src = "./img/before.svg";
                             return;
                         }
-                        speechbutton.src = "./img/after.png";
+                        speechbutton.src = "./img/after.svg";
                         recognition.start();
                     }, false);
                 },
