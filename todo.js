@@ -28,16 +28,20 @@ window.onload = function () {
             }
 
             let myDate = new Date();
-
-            data.items.push({
+            let itemData = {
                 msg: data.msg,
                 completed: false,
                 createdTime: myDate.toLocaleString(),
                 isImportant: false,
-                id: GUID(),
-            });
+                id: GUID()
+            };
+            data.items.push(itemData);
             data.msg = '';
-            Update();
+
+            Update({
+                type : "create-new",
+                itemData : itemData
+            });
         }, false);
 
         let uncompletedList = $('.uncompleted-list');
@@ -121,7 +125,7 @@ function Update(action = null) {
                 }
             });
         }
-        else if(action.type == "modify"){
+        else if (action.type == "modify") {
             let uncompletedList = $('.uncompleted-list');
             let id = action.id;
             uncompletedList.childNodes.forEach((node) => {
@@ -130,6 +134,16 @@ function Update(action = null) {
                     todoContent.innerHTML = action.msg;
                 }
             });
+        }
+        else if(action.type == "create-new"){
+            let itemData = action.itemData;
+            let input = $('.add-todo .input');
+            input.value = '';
+            createUncomplete(itemData);
+        }
+        else if(action.type == "clear"){
+            let completedList = $('.completed-list');
+            completedList.innerHTML = '';
         }
     } else {
         update();
@@ -214,9 +228,9 @@ function createUncomplete(itemData) {
         modifyInput.finish = function (message) {
             itemData.msg = message;
             Update({
-                type:"modify",
-                id : itemData.id,
-                msg : itemData.msg
+                type: "modify",
+                id: itemData.id,
+                msg: itemData.msg
             });
         }
         //todo css
@@ -234,6 +248,7 @@ function updateCount() {
     completedText.innerHTML = 'Unfinished ' + unfinishedCount;
 }
 
+//The original 
 function update() {
     model.flush();
 
@@ -260,8 +275,8 @@ function update() {
             (itemData) => {
                 createCompleted(itemData);
             });
+        updateCount();
     }
-    updateCount();
 }
 
 //set all item to be done or not done
@@ -288,7 +303,9 @@ function clearAllCompleted() {
             }
         }
     }
-    Update();
+    Update({
+        type:"clear",
+    });
 }
 
 //get a tempalte item 
