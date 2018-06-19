@@ -345,7 +345,8 @@ function initSpeechRec() {
                     };
 
                     recognition.onresult = function (event) {
-                        $('.input').value = event.results[0][0].transcript;
+                        model.data.msg = event.results[0][0].transcript
+                        Update();
                         let speechbutton = $('.add-todo .speech-icon');
                         speechbutton.src = "./img/before.svg";
                     };
