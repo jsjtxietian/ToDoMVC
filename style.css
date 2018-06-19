@@ -242,3 +242,10 @@ input[type="checkbox"]:checked+label::before{
   content:"✓";
   font-size: 22pt;
 }
+
+.clear-toggle{
+  border-radius: 2px;
+  border: 2px;
+  font-family: serif;
+  box-shadow: 2px 2px 25px -8px black;
+}
