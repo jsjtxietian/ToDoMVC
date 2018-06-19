@@ -243,9 +243,9 @@ function updateCount() {
     let data = model.data;
     let completedText = $('.completed-count');
     completedText.innerHTML = '';
-    let unfinishedCount = 0;
-    unfinishedCount = data.items.filter(item => item.completed == true).length;
-    completedText.innerHTML = 'Unfinished ' + unfinishedCount;
+    let finishedCount = 0;
+    finishedCount = data.items.filter(item => item.completed == true).length;
+    completedText.innerHTML = 'Finished ' + finishedCount;
 }
 
 //The original 
@@ -255,6 +255,7 @@ function update() {
     let data = model.data;
     let uncompletedList = $('.uncompleted-list');
     let completedList = $('.completed-list');
+    let completedText = $('.completed-count');
     let input = $('.add-todo .input');
 
     input.value = data.msg;
@@ -269,6 +270,7 @@ function update() {
     }
 
     completedList.innerHTML = '';
+    completedText.innerHTML = '';
 
     if (data.filter == "All" || data.filter == "Completed") {
         data.items.filter(item => item.completed == true).forEach(
@@ -514,12 +516,11 @@ function initModal() {
 
     modifyInput.addEventListener('keyup', function (event) {
         if (event.keyCode != 27 && event.keyCode != 13)
-            return; // Enter
+            return; // Enter & Esc
         if (modifyInput.value == '')
             return;
         modifyInput.finish(modifyInput.value);
         overlay.style.visibility = "hidden";
-        Update();
     }, false);
 
     //todo bigger blur
