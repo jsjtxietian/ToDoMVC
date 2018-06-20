@@ -124,6 +124,7 @@ function Update(action = null) {
                     node.remove();
                 }
             });
+            updateCount();
         }
         else if (action.type == "modify") {
             let uncompletedList = $('.uncompleted-list');
@@ -144,6 +145,7 @@ function Update(action = null) {
         else if(action.type == "clear"){
             let completedList = $('.completed-list');
             completedList.innerHTML = '';
+            updateCount();
         }
     } else {
         update();
