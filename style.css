@@ -149,7 +149,7 @@
 
 .add-todo .speech-icon{
   vertical-align: middle;
-  width: 8.5%;
+  /* width: 8.5%; */
 }
 
 .add-todo .hr-line{
@@ -162,7 +162,7 @@
 
 .add-todo .img-add{
   vertical-align: middle;
-  width: 8.5%;
+  /* width: 8.5%; */
 }
 
 .body-style {
