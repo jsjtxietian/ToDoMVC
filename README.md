@@ -23,10 +23,10 @@
 
     ![](./md/slide.jpg)
 
-  ## 文件结构
+## 文件结构
 
-  - index.html ，主页面
-  - style.css ，全部样式
+  * index.html ，主页面
+  * style.css ，全部样式
 
   * todo.js ，主要的功能逻辑代码，遵循模块化的思想进行了适度封装
 
@@ -43,12 +43,12 @@
   * provider.js , model.js 基本与老师示例相同，model.js做了些改变来适应新的功能
   * ping.js，用javascript模拟ping，用处是判断用户是否能访问外网，不能则不开启语音输入功能
 
-  ##用到的资料
+  ## 用到的资料
 
   * 老师上课的示例代码，主要参考examples/data/中关于localstorage的部分
   * normalize.css 
   * 模拟ping功能，参考此处 https://stackoverflow.com/questions/4282151/is-it-possible-to-ping-a-server-from-javascript
 
-  ##已知问题
+  ## 已知问题
   * 样式方面，没有针对pc优化
   * 关于手势上划下划操作和浏览器默认行为的冲突问题，粗暴的禁用默认也许不是一个好主意
