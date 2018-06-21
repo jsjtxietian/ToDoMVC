@@ -5,7 +5,6 @@ window.onload = function () {
     initSlide();
     initSpeechRec();
     initModal();
-    //todo filter
 
     model.init(function () {
         let data = model.data;

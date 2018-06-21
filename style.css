@@ -108,7 +108,7 @@
 
 .sort{
     color: white;
-    margin-left: 25%;
+    margin-right: 5%;
     border : 0;
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-style: italic;
@@ -123,6 +123,7 @@
   box-shadow: 2px 2px 30px -10px black;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .head .head-text{
@@ -249,4 +250,9 @@ input[type="checkbox"]:checked+label::before{
   border: 2px;
   font-family: serif;
   box-shadow: 2px 2px 25px -8px black;
+}
+
+.head-left{
+  display: flex;
+  align-items: center;
 }
