@@ -45,6 +45,6 @@
 
   ##用到的资料
 
-  * 老师上课的示例代码
+  * 老师上课的示例代码，主要参考examples/data/中关于localstorage的部分
   * normalize.css 
   * 模拟ping功能，参考此处 https://stackoverflow.com/questions/4282151/is-it-possible-to-ping-a-server-from-javascript
