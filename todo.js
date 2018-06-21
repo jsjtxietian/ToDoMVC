@@ -26,6 +26,17 @@ window.onload = function () {
                 return;
             }
 
+            //check "     " 
+            let isEmpty = true;
+            for(let i = 0 ; i < data.msg.length ; i++){
+                if(data.msg[i] != " ")
+                    isEmpty = false;
+            }
+            if(isEmpty){
+                console.warn('input msg is empty');
+                return;
+            }
+
             let myDate = new Date();
             let itemData = {
                 msg: data.msg,
@@ -427,12 +438,12 @@ function addSwipeEvent(targetElement, userSetting) {
                 isContinue = false;
             }
 
-            if (event.cancelable) {
-                // 判断默认行为是否已经被禁用
-                if (!event.defaultPrevented) {
-                    event.preventDefault();
-                }
-            }
+            // if (event.cancelable) {
+            //     // 判断默认行为是否已经被禁用
+            //     if (!event.defaultPrevented) {
+            //         event.preventDefault();
+            //     }
+            // }
 
         },
 

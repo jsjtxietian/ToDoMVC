@@ -50,4 +50,5 @@
   * 模拟ping功能，参考此处 https://stackoverflow.com/questions/4282151/is-it-possible-to-ping-a-server-from-javascript
 
   ##已知问题
-  * 主要还是样式方面，pc访问样子大概能看，但是没有针对性优化；在屏幕特别窄的部分机型可能会出现一定的错乱。
+  * 样式方面，没有针对pc优化
+  * 关于手势上划下划操作和浏览器默认行为的冲突问题，粗暴的禁用默认也许不是一个好主意
